@@ -46,7 +46,7 @@ server.register(
   [
     Vision,
     Inert,
-    createWebpackPlugin({
+    createHapiWebpackPlugin({
       config,
       webpack,
       hot: true,
@@ -102,7 +102,8 @@ import CopyPlugin from 'copy-webpack-plugin'
 import {StatsWriterPlugin} from 'webpack-stats-plugin'
 
 const debugStubPath: string = require.resolve('empty/functionThatReturns')
-const {version, name} = require(path.resolve(fr(__dirname), 'package.json'))
+const root = fr(__dirname)
+const {version, name} = require(path.resolve(root, 'package.json'))
 
 const isProduction: boolean = process.env.NODE_ENV === 'production'
 
@@ -120,7 +121,7 @@ const fallback = []
 if (process.env.NVM_PATH) {
     fallback.push(path.resolve(process.env.NVM_PATH, '..', 'node_modules'))
 }
-fallback.push(path.resolve(__dirname, '..', 'node_modules'))
+fallback.push(path.resolve(root, 'node_modules'))
 
 function createStyleLoaders(...args: any[]): string[] {
     const styleLoader = 'style?' + styleOptions.join('&')
@@ -137,7 +138,7 @@ const commonEntries = isProduction
     ]
 
 export default {
-    cwd: path.resolve(__dirname, '..'),
+    cwd: root,
     cache: !isProduction,
     debug: !isProduction,
     devtool: isProduction ? '' : 'source-map',
@@ -149,12 +150,12 @@ export default {
     },
     output: {
         publicPath: '/',
-        path: path.resolve(__dirname, '..', 'dist'),
+        path: path.resolve(root, 'dist'),
         filename: main
     },
     entry: {
         'browser': commonEntries.concat([
-            path.resolve(__dirname, '..', 'src', 'browser.js')
+            path.resolve(root, 'src', 'browser.js')
         ])
     },
     configLoader: {
@@ -219,7 +220,7 @@ export default {
         }),
         new CopyPlugin([
             {
-                from: '../assets/*',
+                from: path.join(root, 'assets', '*'),
                 to: 'assets'
             }
         ])
