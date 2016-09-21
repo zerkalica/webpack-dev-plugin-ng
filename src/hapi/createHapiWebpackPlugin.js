@@ -8,16 +8,20 @@ type HapiRequest = Object
 type HapiReply = Object
 
 export default function createHapiWebpackPlugin(
-    {config, webpack, devView, hot}: {
+    {config, webpack, devView, hot, progress}: {
         config: WebpackConfig,
         webpack: Webpack,
         devView?: (req: HapiRequest, reply: HapiReply) => void,
-        hot?: boolean
+        hot?: boolean,
+        progress?: boolean
     }
 ): HapiPlugin {
     const cb = new WebpackConfigBuilder(config, webpack)
     if (hot) {
         cb.addHot()
+    }
+    if (progress) {
+        cb.addProgress()
     }
     return {
         register: registerHapiWebpackPlugin,

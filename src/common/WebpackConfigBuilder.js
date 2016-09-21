@@ -3,6 +3,7 @@ import __debug from 'debug'
 import path from 'path'
 import fr from 'find-root'
 import url from 'url'
+import createProgressPlugin from './createProgressPlugin'
 
 const clientPath: string = path.join(fr(__dirname), 'dist', 'client')
 
@@ -57,6 +58,11 @@ export default class WebpackConfigBuilder {
         this._wpInstance = this._webpack(config)
 
         return this._wpInstance
+    }
+
+    addProgress(): WebpackConfigBuilder {
+        this._webpackConfig.plugins.push(createProgressPlugin(this._webpack))
+        return this
     }
 
     addHot(): WebpackConfigBuilder {
