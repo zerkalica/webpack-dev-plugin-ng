@@ -11,6 +11,8 @@ npm install --save-dev hapi vision inert handlebars webpack webpack-dev-plugin-n
 Example dev server:
 
 ```js
+import path from 'path'
+
 import {Server} from 'hapi'
 
 import Vision from 'vision'
@@ -18,7 +20,7 @@ import Inert from 'inert'
 import handlebars from 'handlebars'
 import Boom from 'boom'
 
-import {createHapiWebpackPlugin} from 'webpack-dev-plugin-ng/hapi'
+import {createHapiWebpackPlugin, createDevView} from 'webpack-dev-plugin-ng/hapi'
 import webpack from 'webpack'
 
 import config from './webpack.config'
@@ -27,20 +29,6 @@ const server = new Server()
 
 const templatePath = path.resolve(__dirname, 'index.html')
 const staticPagesMask = new RegExp('^/(index|confirm|wait)?(\.html)?$', 'g')
-
-function createDevView({staticPagesMask, templatePath}) {
-    return function devView(request, reply) {
-        if (staticPagesMask && !request.path.match(staticPagesMask)) {
-            return reply(Boom.notFound(`Static page ${request.path}`))
-        }
-
-        return reply.view(templatePath, {
-            info: request.connection.info,
-            payload: JSON.stringify(request.payload || {}, null, '  ')
-        })
-    }
-}
-
 
 server.register(
   [
