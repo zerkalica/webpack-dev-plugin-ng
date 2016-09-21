@@ -5,7 +5,7 @@ Webpack dev plugin with hot-reloading for hapi.
 Example dev server deps:
 
 ```bash
-npm install --save-dev hapi vision inert handlebars webpack webpack-dev-plugin-ng find-root copy-webpack-plugin empty webpack-stats-plugin source-map json-loader babel-loader node-config-loader style-loader stack-source-map
+npm install --save-dev hapi vision inert handlebars webpack webpack-dev-plugin-ng find-root copy-webpack-plugin empty webpack-stats-plugin source-map json-loader babel-loader node-config-loader style-loader stack-source-map boom
 ```
 
 Example dev server:
@@ -16,6 +16,7 @@ import {Server} from 'hapi'
 import Vision from 'vision'
 import Inert from 'inert'
 import handlebars from 'handlebars'
+import Boom from 'boom'
 
 import {createHapiWebpackPlugin} from 'webpack-dev-plugin-ng/hapi'
 import webpack from 'webpack'
