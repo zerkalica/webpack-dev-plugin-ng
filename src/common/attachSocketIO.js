@@ -21,10 +21,10 @@ function sendStats(emit, stats, force) {
     }
 }
 
-function attachToListener({server, listener, getState, socketIOPrefix, hot}) {
+function attachToListener({server, listener, getState, socketPath, hot}) {
     const io = socketIO.listen(listener, {
         'log level': 2,
-        path: (socketIOPrefix || '') + '/socket.io'
+        path: socketPath
     })
     io.sockets.on('connection', socket => {
         const emit = socket.emit.bind(socket)
@@ -62,13 +62,13 @@ class State<S> {
 function attachToListeners({
     listeners,
     getState,
-    socketIOPrefix,
+    socketPath,
     hot
 }) {
     const ios = listeners.map(({listener}) => attachToListener({
         listener,
         getState,
-        socketIOPrefix,
+        socketPath,
         hot
     }))
 
@@ -82,19 +82,19 @@ function attachToListeners({
 function attachSocketIO({
     listeners,
     compiler,
-    socketIOPrefix,
+    socketPath,
     hot
 }: {
     listeners: Function[],
     compiler: Object,
-    socketIOPrefix: string,
+    socketPath: string,
     hot: string
 }): void {
     const state = new State()
     const {emit} = attachToListeners({
         listeners,
         getState: state.getState,
-        socketIOPrefix,
+        socketPath,
         hot
     })
 

@@ -12,8 +12,7 @@ function registerHapiWebpackPlugin(
         socketIOPrefix,
         hot = false,
         watchDelay = 200,
-        quiet = true,
-        noInfo = true,
+        showStats = false,
         devView,
         context = process.cwd()
     },
@@ -22,12 +21,9 @@ function registerHapiWebpackPlugin(
     const {outputPath} = compiler
     const {output} = compiler.options
     const {publicPath} = output
-    const showInfo = !noInfo && !quiet
-    const showStats = !quiet
     const statsOptions = {
         context
     }
-
     attachSocketIO({
         listeners: server.connections,
         compiler,
@@ -37,7 +33,6 @@ function registerHapiWebpackPlugin(
 
     const chain = new CompilerHandlerChain({
         statsOptions,
-        showInfo,
         showStats,
         publicPath,
         outputPath,
@@ -48,7 +43,6 @@ function registerHapiWebpackPlugin(
     const hapiRouteHandler = new HapiRouteHandler({
         fs: chain.getFs(),
         runHandler: chain.getHandlerRunner(),
-        showInfo,
         devView
     })
 

@@ -4,10 +4,11 @@ import path from 'path'
 import fr from 'find-root'
 import url from 'url'
 import createProgressPlugin from './createProgressPlugin'
+import getSocketPath from './getSocketPath'
 
 const clientPath: string = path.join(fr(__dirname), 'dist', 'client')
 
-const debug = __debug('hapi-webpack-dev-plugin:createWebpack:debug')
+const debug = __debug('webpack-dev-plugin-ng:createWebpack:debug')
 
 export type WebpackConfig = Object
 export type HotModuleReplacementPlugin = Function
@@ -21,13 +22,10 @@ export default class WebpackConfigBuilder {
     _webpack: Class<Webpack>
     _wpInstance: Webpack
     _webpackConfig: WebpackConfig
+    _from: string
 
     isHot: boolean
-
-    from: {
-        href: string;
-        pathname: string;
-    };
+    socketPath: string
 
     constructor(
         webpackConfig: WebpackConfig,
@@ -39,10 +37,9 @@ export default class WebpackConfigBuilder {
         this._webpack = webpack
         this._hmr = webpack.HotModuleReplacementPlugin
         this.isHot = false
-        this.from = {
-            pathname: '',
-            ...url.parse(this._publicPath)
-        }
+        this.socketPath = getSocketPath(this._publicPath)
+        debug('socketPath: %s', this.socketPath)
+        this._from = url.parse(this._publicPath).href
     }
 
     getWebpack(): Webpack {
@@ -70,9 +67,10 @@ export default class WebpackConfigBuilder {
         const entry: Object|Array<*> = config.entry
         let newEntry: {[id: string]: mixed} | mixed[]
         const devClient: mixed[] = [
-            this._clientPath + '?' + this.from.href,
+            this._clientPath + '?' + this._from,
             'webpack/hot/dev-server'
         ]
+        debug('new entries: %s', devClient.join('\n'))
 
         if(typeof entry === 'object' && !Array.isArray(entry)) {
             newEntry = {}
@@ -92,10 +90,13 @@ export default class WebpackConfigBuilder {
             ].concat(config.plugins),
             output: {
                 ...config.output || {},
-                publicPath: this.from.href + '/'
+                publicPath: this._from
             },
             entry: newEntry
         }
+
+        debug('wp output: %s', JSON.stringify(this._webpackConfig.output, null, '  '))
+        debug('wp entry: %s', JSON.stringify(this._webpackConfig.entry, null, '  '))
 
         return this
     }

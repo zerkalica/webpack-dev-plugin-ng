@@ -3,6 +3,7 @@
 import IO from 'socket.io-client'
 import url from 'url'
 import stripAnsi from 'strip-ansi'
+import getSocketPath from '../common/getSocketPath'
 
 function createHandlers() {
     let hot: bool = false
@@ -74,23 +75,39 @@ function getClientUriFromDocument(window): string {
     const scriptElements = window.document.getElementsByTagName('script')
     const __resourceQuery = window.__resourceQuery || null
 
-    const uri: string = typeof __resourceQuery === 'string' && __resourceQuery
+    let uri: string = typeof __resourceQuery === 'string' && __resourceQuery
         ? __resourceQuery.substr(1)
-        : scriptElements[scriptElements.length - 1].getAttribute('src').replace(/\/[^\/]+$/, '')
+        : scriptElements[scriptElements.length - 1]
+            .getAttribute('src')
+            .replace(/\/[^\/]+$/, '')
+
+    if (!uri) {
+        uri = window.location.origin
+    }
 
     return uri
 }
 
 function createSocketIO(uri: string) {
-    const parts = url.parse(uri)
+    const parts = {
+        protocol: '',
+        ...url.parse(uri)
+    }
 
-    if (!parts.path || !parts.protocol || !parts.host) {
+    if (!parts.path || !parts.host) {
         throw new Error(`path is not found in url ${uri}`)
     }
 
-    const io = IO.connect(parts.protocol + (parts.slashes ? '//' : '') + parts.host, {
-        path: `${parts.path}/socket.io`
+    const socketPath: string = getSocketPath(uri)
+    const connectPath: string = parts.protocol
+        + (parts.slashes ? '//' : '')
+        + parts.host
+
+    const io = IO.connect(connectPath, {
+        path: socketPath
     })
+
+    console.log(`[WDS] connected to ${connectPath}, socketPath: ${socketPath}`)
 
     return io
 }

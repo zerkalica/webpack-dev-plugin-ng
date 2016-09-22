@@ -90,7 +90,6 @@ class MemoryFs {
 
 export default class CompilerHandlerChain {
     _callbacks: Callbacks
-    _showInfo: boolean
     _showStats: boolean
     _watchDelay: number
     _fs: MemoryFs
@@ -98,14 +97,12 @@ export default class CompilerHandlerChain {
     _statsOptions: Object
 
     constructor({
-        showInfo,
         showStats,
         publicPath,
         outputPath,
         watchDelay,
         statsOptions = {}
     }: {
-        showInfo?: boolean,
         showStats?: boolean,
         publicPath: string,
         outputPath: string,
@@ -113,7 +110,6 @@ export default class CompilerHandlerChain {
         statsOptions: Object
     }) {
         this._statsOptions = statsOptions
-        this._showInfo = showInfo || false
         this._showStats = showStats || false
         this._watchDelay = watchDelay || 300
         this._callbacks = new Callbacks()
@@ -133,7 +129,6 @@ export default class CompilerHandlerChain {
 
     attachToCompiler(compiler: Object) {
         const callbacks = this._callbacks
-        const showInfo = this._showInfo
         const showStats = this._showStats
         const watchDelay = this._watchDelay
         const statsOptions = this._statsOptions
@@ -156,9 +151,7 @@ export default class CompilerHandlerChain {
                         console.log(statsData.toString(statsOptions))
                     }
 
-                    if (showInfo) {
-                        console.info('webpack: bundle is now VALID.')
-                    }
+                    console.info('webpack: bundle is now VALID.')
 
                     // execute callback that are delayed
                     callbacks.run()
@@ -168,7 +161,7 @@ export default class CompilerHandlerChain {
 
         // on compiling
         function invalidPlugin() {
-            if (callbacks.isStateValid() && showInfo) {
+            if (callbacks.isStateValid()) {
                 console.info('webpack: bundle is now INVALID.')
             }
             // We are now in invalid state
