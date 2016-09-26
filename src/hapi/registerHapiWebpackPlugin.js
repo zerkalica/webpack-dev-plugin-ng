@@ -53,10 +53,15 @@ function registerHapiWebpackPlugin(
             handler: hapiRouteHandler.handler
         }
     })
-
-    server.on('close', () => {
+    const close = () => {
         chain.close()
-    })
+    }
+    try {
+        server.on('stop', close)
+    } catch (e) {
+        console.error(e)
+        server.on('close', close)
+    }
 
     next()
 }
