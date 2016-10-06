@@ -5,7 +5,7 @@ import type {WebpackConfig, Webpack} from '../common/WebpackConfigBuilder'
 
 type HapiPlugin = Object
 type HapiRequest = Object
-type HapiReply = Object
+type HapiReply = Function
 
 export default function createHapiWebpackPlugin(
     {config, webpack, devView, hot, progress, showStats}: {
