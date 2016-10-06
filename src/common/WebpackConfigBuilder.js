@@ -12,7 +12,7 @@ const debug = __debug('webpack-dev-plugin-ng:createWebpack:debug')
 
 export type WebpackConfig = Object
 export type HotModuleReplacementPlugin = Function
-export type Webpack = Function
+export type Webpack = any
 
 export default class WebpackConfigBuilder {
     _hmr: HotModuleReplacementPlugin
@@ -29,7 +29,7 @@ export default class WebpackConfigBuilder {
 
     constructor(
         webpackConfig: WebpackConfig,
-        webpack: Class<Webpack>
+        webpack: Webpack
     ) {
         this._clientPath = clientPath
         this._publicPath = webpackConfig.output.publicPath
