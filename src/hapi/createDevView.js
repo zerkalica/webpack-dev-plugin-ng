@@ -4,7 +4,8 @@ import Boom from 'boom'
 
 export default function createDevView({staticPagesMask, templatePath, templateVars}: {
     staticPagesMask?: RegExp,
-    templatePath: string
+    templatePath: string,
+    templateVars?: Object
 }) {
     return function devView(request: Object, reply: Function) {
         if (staticPagesMask && !request.path.match(staticPagesMask)) {
