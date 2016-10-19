@@ -2,7 +2,7 @@
 
 import Boom from 'boom'
 
-export default function createDevView({staticPagesMask, templatePath}: {
+export default function createDevView({staticPagesMask, templatePath, templateVars}: {
     staticPagesMask?: RegExp,
     templatePath: string
 }) {
@@ -12,6 +12,7 @@ export default function createDevView({staticPagesMask, templatePath}: {
         }
 
         return reply.view(templatePath, {
+            templateVars: templateVars || {},
             info: request.connection.info,
             payload: JSON.stringify(request.payload || {}, null, '  ')
         })
